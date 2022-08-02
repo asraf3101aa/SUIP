@@ -1,32 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+session_start();
+include("includes/header.php");
+?>
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title>SUIP</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
-
-  <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
-  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
   <link href="assets/css/formstyle.css" rel="stylesheet">
 
 
@@ -53,7 +29,7 @@
   <header id="header" class="fixed-top ">
     <div class="container d-flex align-items-center justify-content-lg-between">
 
-      <h1 class="logo me-auto me-lg-0"><a href="index.html">SUIP<span>.</span></a></h1>
+      <h1 class="logo me-auto me-lg-0"><a href="index.php">SUIP<span>.</span></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
@@ -66,21 +42,35 @@
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
 
-      <a href="#about" class="get-started-btn scrollto">Login</a>
+      <?php
+        if(isset($_SESSION['user_email'])){
+          ?>
+          <a href="user/my_account.php?edit_account" class="get-started-btn scrollto">Profile</a> 
+          <?php
+        }
+        else
+        { 
+          ?>
+          <a href="login.php" class="get-started-btn scrollto">Login</a>
+          <?php
+        }
+      ?>
+
+      
 
     </div>
   </header><!-- End Header -->
 
   <!-- ======= Hero Section ======= -->
   <section id="hero" class="d-flex align-items-center justify-content-center">
-    <div class="container" data-aos="fade-up">
+    <div class="container">
       
 
-      <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
+      <div class="row justify-content-center">
         
        
 
-      <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
+      <div class="row gy-4 mt-5 justify-content-center">
         <div class="row">
           <div class="col-md-7 col-md-push-5">
             <div class="booking-cta">
@@ -134,13 +124,6 @@
                 </script>
                 </div>
                 
-
-
-
-              
-       
- 
-    
                 <div class="form-btn">
                   <button type="submit">Find sumo</button>
                 </div>
@@ -274,68 +257,7 @@
 
   </main><!-- End #main -->
 
-  <!-- ======= Footer ======= -->
-  <footer id="footer">
-    <div class="footer-top">
-      <div class="container">
-        <div class="row">
-
-          <div class="col-lg-3 col-md-6">
-            <div class="footer-info">
-              <h3>SUIP<span>.</span></h3>
-              <p>
-                Buddha Chowk <br>
-                Hetauda 44107, Nepal<br><br>
-                <strong>Phone:</strong> +977 980-2536458<br>
-                <strong>Email:</strong> suipservices@gmail.com<br>
-              </p>
-              <div class="social-links mt-3">
-                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-                <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
-                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-                <a href="#" class="telegram"><i class="bx bxl-telegram"></i></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-2 col-md-6 footer-links">
-            <h4>Useful Links</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#services">Services</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Our Services</h4>
-            <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Sumo</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Bus</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Flight</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-4 col-md-6 footer-newsletter">
-            <h4>Our Newsletter</h4>
-            <p>Subscribe to our news letter for latest offers and discounts</p>
-            <form action="" method="post">
-              <input type="email" name="email" placeholder="Enter your email"><input type="submit" value="Subscribe">
-            </form>
-
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="copyright">
-        &copy; Copyright <strong><span>SUIP</span></strong>. All Rights Reserved
-      </div>
-    </div>
-  </footer><!-- End Footer -->
+  <?php include("includes/footer.php"); ?>
 
   <div id="preloader"></div>
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

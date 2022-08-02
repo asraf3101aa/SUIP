@@ -1,0 +1,25 @@
+body{
+    background: linear-gradient(to right, rgba(37, 117, 252, 1),rgba(106, 17, 203, 1));
+}
+.login .login-form button[type=submit] {
+    background: #ffc451;
+    border: 0;
+    padding: 10px 24px;
+    color: #151515;
+    transition: 0.4s;
+    border-radius: 4px;
+}
+.login .login-form button[type=submit]:hover {
+  background: #ffcd6b;
+}
+.signup .signup-form button[type=submit] {
+  background: #ffc451;
+  border: 0;
+  padding: 10px 24px;
+  color: #151515;
+  transition: 0.4s;
+  border-radius: 4px;
+}
+.signup .signup-form button[type=submit]:hover {
+background: #ffcd6b;
+}
