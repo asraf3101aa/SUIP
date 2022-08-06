@@ -1,5 +1,58 @@
+
 <?php
-session_start();
+
+include("includes/db.php");
+
+$to_err = $from_err = $date_err =  $time_err = "";
+$location_regex = $date_regex = $time_regex = "";
+$to = $from = $date = $time = "";
+$location_regex = "/^[A-Za-z]+$/";
+$date_regex = "/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/";
+$time_regex = "/^([01][0-9]|2[0-3]):([0-5][0-9])$/";
+$confirmation_error="";
+if (isset($_POST['find'])) {
+
+
+  if (!preg_match($location_regex, (trim($_POST['to'])))) {
+    $to_err = "Enter valid city name";
+  } else {
+    $to = trim($_POST['to']);
+  }
+  if (!preg_match($location_regex, (trim($_POST['from'])))) {
+    $from_err = "Enter valid city name";
+  } else {
+    $from = trim($_POST['from']);
+  }
+
+  if (!preg_match($date_regex, (trim($_POST['date'])))) {
+    $date_err = "Enter valid date";
+  } else {
+    $date = trim($_POST['date']);
+  }
+
+  if (!preg_match($time_regex, (trim($_POST['time'])))) {
+    $time_err = "Enter valid time";
+  } else {
+    $time = trim($_POST['time']);
+  }
+  if (empty($to_err) && empty($from_err) && empty($date_err) && empty($time_err) ) {
+  }
+
+ 
+
+  
+
+
+
+
+  $get_email = "select * from users where user_email='$u_email'";
+
+  $run_email = mysqli_query($con, $get_email);
+
+  $check_email = mysqli_num_rows($run_email);
+}
+?>
+<?php
 include("includes/header.php");
 ?>
 
@@ -21,6 +74,24 @@ include("includes/header.php");
   <!-- Include Date Range Picker -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+  <?php
+  if($to_err!=""){
+    ?><style>.to-error{display: block}</style><?php
+  }
+  if($from_err!=""){
+    ?><style>.from-error{display: block}</style><?php
+  }
+  if($date_err!=""){
+    ?><style>.date-error{display: block}</style><?php
+  }
+  if($time_err!=""){
+    ?><style>.time-error{display: block}</style><?php
+  }
+  
+?>
+
+
 </head>
 
 <body>
@@ -89,10 +160,18 @@ include("includes/header.php");
                 <div class="form-group">
                   <span class="form-label">To</span>
                   <input class="form-control" type="text" placeholder="Enter a destination" name="to">
+
+                  <p class="error to-error mt-2">
+                      <?php echo $to_err; ?>
+                    </p> 
                 </div>
+
                 <div class="form-group">
                   <span class="form-label">From</span>
                   <input class="form-control" type="text" placeholder="Enter Your Starting Point" name="from">
+                    <p class="error from-error mt-2">
+                      <?php echo $to_err; ?>
+                    </p>
                 </div>
                 <div class="form-group">
                   <span class="form-label">Select Date</span>
@@ -125,7 +204,7 @@ include("includes/header.php");
                 </div>
                 
                 <div class="form-btn">
-                  <button type="submit">Find sumo</button>
+                  <button type="submit" name="find">Find sumo</button>
                 </div>
               </form>
             </div>

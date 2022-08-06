@@ -1,22 +1,16 @@
 <?php
 session_start();
 include("includes/db.php");
-$login_fail=null;
+$login_fail="";
 if (isset($_POST['login'])) {
-
-    $u_email = $_POST['u_email'];
-
-    $u_password = $_POST['u_password'];
-
-    
 
     $select_user = "select * from users where user_email='$u_email'";
 
     $run_user = mysqli_query($con, $select_user);
-
-
-    $data = mysqli_fetch_assoc($run_user);
-    $hash_password = $data['user_password'];
+    if(mysqli_num_rows($run_user)>0){
+      
+    $user = mysqli_fetch_assoc($run_user);
+    $hash_password = $user['user_password'];
     if (!password_verify($u_password, $hash_password)) {
         $login_fail="Invalid email or password";
     } 
@@ -27,6 +21,10 @@ if (isset($_POST['login'])) {
 
         echo "<script>window.open('user/my_account.php?my_orders','_self')</script>";
     }
+  }
+  else{
+    $login_fail="Invalid email or password";
+  }
 }
 
 ?>
@@ -63,7 +61,7 @@ include("includes/header.php");
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 
 <?php
-  if($login_fail!=null){
+  if($login_fail!=""){
     ?><style>.login-error{display: block;}</style><?php
   }
 ?>

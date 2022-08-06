@@ -3,7 +3,7 @@
 session_start();
 include("includes/db.php");
 
-$email_err = $name_err = $contact_err =  $password_err = $confirm_password_err = null;
+$email_err = $name_err = $contact_err =  $password_err = $confirm_password_err = $address_err = "";
 $name_regex = $phone_regex = $password_regex = "";
 $password = "";
 $u_email = $u_contact = $u_name = $u_password = "";
@@ -11,8 +11,9 @@ $name_regex = "/^[a-zA-Z]{3,20}(?: [a-zA-Z]+){0,2}$/";
 $phone_regex = "/(\+977)?[9][6-9]\d{8}/";
 $password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/";
 $u_image="user.png";
-$confirmation_message=null;
-$confirmation_error=null;
+$confirmation_message="";
+$confirmation_error="";
+$u_address="";
 if (isset($_POST['register'])) {
 
   //validity check
@@ -54,6 +55,12 @@ if (isset($_POST['register'])) {
     $confirm_password_err = "Passwords should match";
   }
 
+  if (empty(trim($_POST['u_address']))) {
+    $address_err = "Enter your address";
+  } else {
+    $u_address = trim($_POST['u_address']);
+  }
+
   
 
   $u_password = password_hash($password, PASSWORD_DEFAULT);
@@ -72,7 +79,7 @@ if (isset($_POST['register'])) {
   
   }
 
-  if (empty($email_err) && empty($name_err) && empty($contact_err) && empty($password_err)) {
+  if (empty($email_err) && empty($name_err) && empty($contact_err) && empty($password_err) && empty($address_err)) {
 
     
     
@@ -121,7 +128,7 @@ if (isset($_POST['register'])) {
     
     }
 
-    $insert_user = "insert into users (user_name,user_email,user_password,user_contact,user_image,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_image','$user_confirm_code')";
+    $insert_user = "insert into users(user_name,user_email,user_password,user_contact,user_image,user_address,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_image','$u_address','$user_confirm_code')";
 
     $run_user = mysqli_query($con, $insert_user);
 
@@ -157,27 +164,31 @@ include("includes/header.php");
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 
 <?php
-  if($name_err!=null){
+  if($name_err!=""){
     ?><style>.name-error{display: block}</style><?php
   }
-  if($email_err!=null){
+  if($email_err!=""){
     ?><style>.email-error{display: block}</style><?php
   }
-  if($contact_err!=null){
+  if($contact_err!=""){
     ?><style>.contact-error{display: block}</style><?php
   }
-  if($password_err!=null){
+  if($address_err!=""){
+    ?><style>.address-error{display: block}</style><?php
+  }
+  if($password_err!=""){
     ?><style>.password-error{display: block}</style><?php
   }
-  if($confirm_password_err!=null){
+  if($confirm_password_err!=""){
     ?><style>.confirmpassword-error{display: block}</style><?php
   }
-  if($confirmation_error!=null){
+  if($confirmation_error!=""){
     ?><style>.signup-success{display: block;color: #af4242; background-color: #fde8ec;}</style><?php
   }
-  if($confirmation_message!=null){
+  if($confirmation_message!=""){
     ?><style>.signup-success{display: block;}</style><?php
   }
+  
 ?>
 </head>
 
@@ -266,6 +277,22 @@ include("includes/header.php");
                     <div class="form-outline flex-fill mb-0">
                       <p class="error contact-error">
                         <?php echo $contact_err; ?>
+                      </p>                   
+                    </div>
+                  </div>
+
+                  <div class="d-flex flex-row align-items-center mb-2">
+                    <i class="fas fa-map fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                      <input name="u_address" placeholder="Address" class="form-control" type="text" value="<?php echo (isset($u_address)) ? $u_address: ''?>">
+                    </div>
+                  </div>
+                  
+                  <div class="d-flex flex-row align-items-center">
+                    <i class="fas fa- fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                      <p class="error address-error">
+                        <?php echo $address_err; ?>
                       </p>                   
                     </div>
                   </div>
