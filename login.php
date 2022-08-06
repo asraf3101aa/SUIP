@@ -4,6 +4,11 @@ include("includes/db.php");
 $login_fail="";
 if (isset($_POST['login'])) {
 
+    $u_email = $_POST['u_email'];
+
+    $u_password = $_POST['u_password'];
+
+
     $select_user = "select * from users where user_email='$u_email'";
 
     $run_user = mysqli_query($con, $select_user);

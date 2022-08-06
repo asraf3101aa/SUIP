@@ -243,7 +243,7 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error name-error">
+                      <p class="error-form name-error">
                         <?php echo $name_err; ?>
                       </p>                   
                     </div>
@@ -259,7 +259,7 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error email-error">
+                      <p class="error-form email-error">
                         <?php echo $email_err; ?>
                       </p>                   
                     </div>
@@ -275,7 +275,7 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error contact-error">
+                      <p class="error-form contact-error">
                         <?php echo $contact_err; ?>
                       </p>                   
                     </div>
@@ -291,7 +291,7 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error address-error">
+                      <p class="error-form address-error">
                         <?php echo $address_err; ?>
                       </p>                   
                     </div>
@@ -307,7 +307,7 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error password-error">
+                      <p class="error-form password-error">
                         <?php echo $password_err; ?>
                       </p>                   
                     </div>
@@ -323,7 +323,7 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error confirmpassword-error">
+                      <p class="error-form confirmpassword-error">
                         <?php echo $confirm_password_err; ?>
                       </p>                   
                     </div>

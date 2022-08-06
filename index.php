@@ -36,6 +36,11 @@ if (isset($_POST['find'])) {
     $time = trim($_POST['time']);
   }
   if (empty($to_err) && empty($from_err) && empty($date_err) && empty($time_err) ) {
+    $get_email = "select * from users where user_email='$u_email'";
+
+    $run_email = mysqli_query($con, $get_email);
+
+    $check_email = mysqli_num_rows($run_email);
   }
 
  
@@ -45,11 +50,7 @@ if (isset($_POST['find'])) {
 
 
 
-  $get_email = "select * from users where user_email='$u_email'";
-
-  $run_email = mysqli_query($con, $get_email);
-
-  $check_email = mysqli_num_rows($run_email);
+  
 }
 ?>
 <?php
@@ -169,7 +170,7 @@ include("includes/header.php");
                 <div class="form-group">
                   <span class="form-label">From</span>
                   <input class="form-control" type="text" placeholder="Enter Your Starting Point" name="from">
-                    <p class="error from-error mt-2">
+                    <p class="error-form from-error">
                       <?php echo $to_err; ?>
                     </p>
                 </div>
