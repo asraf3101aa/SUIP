@@ -1,5 +1,6 @@
 <?php
 session_start();
+include("includes/db.php");
 
 if (!isset($_SESSION['user_email']) || !isset($_SESSION['user_id'])) {
 
@@ -97,11 +98,30 @@ if (!isset($_SESSION['user_email']) || !isset($_SESSION['user_id'])) {
                   <div class="form-group">
                     <label class="form-label">E-mail</label>
                     <input type="email" class="form-control mb-1" value="<?php echo (isset($u_email)) ? $u_email : '' ?>">
-                    <div class="alert alert-warning mt-3">
-                      Your email is not confirmed.
-                      <a href="javascript:void(0)">Resend confirmation</a>
+                    <?php
+
+                        $u_email = $_SESSION['user_email'];
+
+                        $get_user = "select * from users where user_email='$u_email'";
+
+                        $run_user = mysqli_query($con, $get_user);
+
+                        $row_user = mysqli_fetch_array($run_user);
+
+                        $user_confirm_code = $row_user['user_confirm_code'];
+
+                        $c_name = $row_user['user_name'];
+
+                        if (!empty($user_confirm_code)) {
+
+                      ?>
+                        <div class="alert alert-warning mt-3">
+                        Your email is not confirmed.
+                        <a href="myaccount.php?send_email">Resend confirmation</a>
                       
-                    </div>
+                      
+                        </div>
+                        <?php } ?>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Phone No.</label>
@@ -438,3 +458,37 @@ if (!isset($_SESSION['user_email']) || !isset($_SESSION['user_id'])) {
 </body>
 
 </html>
+<?php
+
+  if (isset($_GET[$user_confirm_code])) {
+
+    $update_user = "update users set user_confirm_code='' where user_confirm_code='$user_confirm_code'";
+
+    $run_confirm = mysqli_query($con, $update_user);
+
+    echo "<script>alert('Your Email Has Been Confirmed')</script>";
+
+    echo "<script>window.open('myaccount.php','_self')</script>";
+  }
+
+  if (isset($_GET['send_email'])) {
+
+    include("../mail.php");
+
+    if (!$mail->send()) {
+  ?>
+      <script>
+        alert("<?php echo " Error occured " ?>");
+      </script>
+    <?php
+    } else {
+    ?>
+      <script>
+        alert("<?php echo " Check your mail for account confirmation " ?>");
+      </script>
+  <?php
+    }
+
+    echo "<script>window.open('my_account.php?my_orders','_self')</script>";
+  }
+  ?>

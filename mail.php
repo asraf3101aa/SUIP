@@ -1,5 +1,5 @@
 <?php
-$user_confirm_code = mt_rand();
+    
 
 
     require "Mail/phpmailer/PHPMailerAutoload.php";
@@ -17,6 +17,9 @@ $user_confirm_code = mt_rand();
     $mail->setFrom('suipservices@gmail.com', 'Verify Email');
     // get email from input
     $mail->addAddress($u_email);
+    $url = explode("/", $_SERVER["HTTP_HOST"].$_SERVER['REQUEST_URI']);
+    array_pop($url);
+    $url = join("/", $url);
 
     // HTML body
     $mail->isHTML(true);
@@ -27,7 +30,7 @@ $user_confirm_code = mt_rand();
             Email Confirmation By SUIP
             </h2>
             
-            <a href='localhost/suip/user/myaccount.php?$user_confirm_code'>
+            <a href='$url/user/myaccount.php?$user_confirm_code'>
             
             Click Here To Confirm Email
             

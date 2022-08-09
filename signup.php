@@ -91,8 +91,9 @@ if (isset($_POST['register'])) {
 
 
 
-
+    $user_confirm_code = mt_rand();
     include("mail.php");
+
 
     if (!$mail->send()) {
       $confirmation_error = "Invalid email";
