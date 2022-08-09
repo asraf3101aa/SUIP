@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 06, 2022 at 11:05 AM
+-- Generation Time: Aug 09, 2022 at 04:26 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -20,6 +20,38 @@ SET time_zone = "+00:00";
 --
 -- Database: `suip`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contact_us`
+--
+
+CREATE TABLE `contact_us` (
+  `contact_id` int(11) NOT NULL,
+  `contact_name` text NOT NULL,
+  `contact_subject` varchar(255) NOT NULL,
+  `contact_message` varchar(255) NOT NULL,
+  `contact_email` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `contact_us`
+--
+
+INSERT INTO `contact_us` (`contact_id`, `contact_name`, `contact_subject`, `contact_message`, `contact_email`) VALUES
+(1, 'Asraf Ansari', 'Hello', 'Hello', 'ashraf115.ak@gmail.com');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sumo`
+--
+
+CREATE TABLE `sumo` (
+  `sumo_id` int(11) NOT NULL,
+  `sumo_no` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -43,11 +75,23 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `user_name`, `user_email`, `user_password`, `user_contact`, `user_image`, `user_confirm_code`, `user_address`) VALUES
-(11, 'Asraf Ansari', 'ashraf115.ak@gmail.com', '$2y$10$aBTiTrasVfaxWbcHTHsUIO.AAPouJFq/yvpqy3w8aGr5q78oDx5H6', '9865049086', 'user.png', '1810027226', '');
+(12, 'Asraf Ansari', 'ashraf115.ak@gmail.com', '$2y$10$mYLJA3upoW4xeTBLPCL5CON/chE./PAVT8odr1RoaQc3LLaXSNqsW', '9865049086', 'user.png', '1269593635', 'Hetauda-11');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `contact_us`
+--
+ALTER TABLE `contact_us`
+  ADD PRIMARY KEY (`contact_id`);
+
+--
+-- Indexes for table `sumo`
+--
+ALTER TABLE `sumo`
+  ADD PRIMARY KEY (`sumo_id`);
 
 --
 -- Indexes for table `users`
@@ -62,10 +106,22 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `contact_us`
+--
+ALTER TABLE `contact_us`
+  MODIFY `contact_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `sumo`
+--
+ALTER TABLE `sumo`
+  MODIFY `sumo_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
