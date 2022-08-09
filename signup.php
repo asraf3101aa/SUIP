@@ -10,10 +10,10 @@ $u_email = $u_contact = $u_name = $u_password = "";
 $name_regex = "/^[a-zA-Z]{3,20}(?: [a-zA-Z]+){0,2}$/";
 $phone_regex = "/(\+977)?[9][6-9]\d{8}/";
 $password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/";
-$u_image="user.png";
-$confirmation_message="";
-$confirmation_error="";
-$u_address="";
+$u_image = "user.png";
+$confirmation_message = "";
+$confirmation_error = "";
+$u_address = "";
 if (isset($_POST['register'])) {
 
   //validity check
@@ -61,7 +61,7 @@ if (isset($_POST['register'])) {
     $u_address = trim($_POST['u_address']);
   }
 
-  
+
 
   $u_password = password_hash($password, PASSWORD_DEFAULT);
 
@@ -74,15 +74,23 @@ if (isset($_POST['register'])) {
 
   if ($check_email == 1) {
 
-    $email_err="This email is already registered, try another one";
-    
-  
+    $email_err = "This email is already registered, try another one";
+  }
+  $get_contact = "select * from users where user_contact='$u_contact'";
+
+  $run_contact = mysqli_query($con, $get_contact);
+
+  $check_contact = mysqli_num_rows($run_contact);
+
+  if ($check_contact == 1) {
+
+    $contact_err = "This number is already registered, try another one";
   }
 
   if (empty($email_err) && empty($name_err) && empty($contact_err) && empty($password_err) && empty($address_err)) {
 
-    
-    
+
+
 
     $user_confirm_code = mt_rand();
 
@@ -121,19 +129,16 @@ if (isset($_POST['register'])) {
             ";
 
     if (!$mail->send()) {
-      $confirmation_error="Invalid email";
-    
+      $confirmation_error = "Invalid email";
     } else {
-      $confirmation_message="Check your email for account confirmation";
-    
+      $confirmation_message = "Check your email for account confirmation";
+      $insert_user = "insert into users(user_name,user_email,user_password,user_contact,user_image,user_address,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_image','$u_address','$user_confirm_code')";
+
+      $run_user = mysqli_query($con, $insert_user);
+
+
+      $_SESSION['user_email'] = $u_email;
     }
-
-    $insert_user = "insert into users(user_name,user_email,user_password,user_contact,user_image,user_address,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_image','$u_address','$user_confirm_code')";
-
-    $run_user = mysqli_query($con, $insert_user);
-
-
-    $_SESSION['user_email'] = $u_email;
   }
 }
 ?>
@@ -164,32 +169,66 @@ include("includes/header.php");
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
 
 <?php
-  if($name_err!=""){
-    ?><style>.name-error{display: block}</style><?php
-  }
-  if($email_err!=""){
-    ?><style>.email-error{display: block}</style><?php
-  }
-  if($contact_err!=""){
-    ?><style>.contact-error{display: block}</style><?php
-  }
-  if($address_err!=""){
-    ?><style>.address-error{display: block}</style><?php
-  }
-  if($password_err!=""){
-    ?><style>.password-error{display: block}</style><?php
-  }
-  if($confirm_password_err!=""){
-    ?><style>.confirmpassword-error{display: block}</style><?php
-  }
-  if($confirmation_error!=""){
-    ?><style>.signup-success{display: block;color: #af4242; background-color: #fde8ec;}</style><?php
-  }
-  if($confirmation_message!=""){
-    ?><style>.signup-success{display: block;}</style><?php
-  }
-  
-?>
+if ($name_err != "") {
+?><style>
+    .name-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($email_err != "") {
+          ?><style>
+    .email-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($contact_err != "") {
+          ?><style>
+    .contact-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($address_err != "") {
+          ?><style>
+    .address-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($password_err != "") {
+          ?><style>
+    .password-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($confirm_password_err != "") {
+          ?><style>
+    .confirmpassword-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($confirmation_error != "") {
+          ?><style>
+    .signup-success {
+      display: block;
+      color: #af4242;
+      background-color: #fde8ec;
+    }
+  </style><?php
+        }
+        if ($confirmation_message != "") {
+          ?><style>
+    .signup-success {
+      display: block;
+    }
+  </style><?php
+        }
+
+          ?>
 </head>
 
 <body>
@@ -221,13 +260,13 @@ include("includes/header.php");
         <div class="col-lg-12 col-xl-5">
           <div class="card text-black" style="border-radius: 25px;">
             <div class="card-body p-md-5">
-            <div class="d-flex flex-row align-items-center">
-              <div class="flex-fill mb-0">
-                <p class="success signup-success text-center">
-                <?php echo (isset($confirmation_message)) ? $confirmation_message: $confirmation_error?>
-                </p>                   
+              <div class="d-flex flex-row align-items-center">
+                <div class="flex-fill mb-0">
+                  <p class="success signup-success text-center">
+                    <?php echo (isset($confirmation_message)) ? $confirmation_message : $confirmation_error ?>
+                  </p>
+                </div>
               </div>
-            </div>
               <div class="col-md-10 col-lg-6 col-xl-12 order-2 order-lg-1">
                 <p class="text-center h1 fw-bold mb-4 mx-1 mx-md-4">Sign up</p>
 
@@ -236,64 +275,64 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center mb-2">
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input name="u_name" class="form-control" placeholder="Full Name" type="text" value="<?php echo (isset($u_name)) ? $u_name: ''?>">
+                      <input name="u_name" class="form-control" placeholder="Full Name" type="text" value="<?php echo (isset($u_name)) ? $u_name : '' ?>">
                     </div>
                   </div>
 
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error-form name-error">
+                      <p class="error name-error">
                         <?php echo $name_err; ?>
-                      </p>                   
+                      </p>
                     </div>
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-2">
                     <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input name="u_email" placeholder="Email" class="form-control" type="email" value="<?php echo (isset($u_email)) ? $u_email: ''?>">
+                      <input name="u_email" placeholder="Email" class="form-control" type="email" value="<?php echo (isset($u_email)) ? $u_email : '' ?>">
                     </div>
                   </div>
 
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error-form email-error">
+                      <p class="error email-error">
                         <?php echo $email_err; ?>
-                      </p>                   
+                      </p>
                     </div>
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-2">
                     <i class="fas fa-phone fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input name="u_contact" placeholder="Phone Number" class="form-control" type="text" value="<?php echo (isset($u_contact)) ? $u_contact: ''?>">
+                      <input name="u_contact" placeholder="Phone Number" class="form-control" type="text" value="<?php echo (isset($u_contact)) ? $u_contact : '' ?>">
                     </div>
                   </div>
-                  
+
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error-form contact-error">
+                      <p class="error contact-error">
                         <?php echo $contact_err; ?>
-                      </p>                   
+                      </p>
                     </div>
                   </div>
 
                   <div class="d-flex flex-row align-items-center mb-2">
                     <i class="fas fa-map fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input name="u_address" placeholder="Address" class="form-control" type="text" value="<?php echo (isset($u_address)) ? $u_address: ''?>">
+                      <input name="u_address" placeholder="Address" class="form-control" type="text" value="<?php echo (isset($u_address)) ? $u_address : '' ?>">
                     </div>
                   </div>
-                  
+
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error-form address-error">
+                      <p class="error address-error">
                         <?php echo $address_err; ?>
-                      </p>                   
+                      </p>
                     </div>
                   </div>
 
@@ -307,9 +346,9 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error-form password-error">
+                      <p class="error password-error">
                         <?php echo $password_err; ?>
-                      </p>                   
+                      </p>
                     </div>
                   </div>
 
@@ -323,9 +362,9 @@ include("includes/header.php");
                   <div class="d-flex flex-row align-items-center">
                     <i class="fas fa- fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <p class="error-form confirmpassword-error">
+                      <p class="error confirmpassword-error">
                         <?php echo $confirm_password_err; ?>
-                      </p>                   
+                      </p>
                     </div>
                   </div>
 
@@ -358,4 +397,3 @@ include("includes/header.php");
 </body>
 
 </html>
-

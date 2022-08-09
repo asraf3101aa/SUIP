@@ -4,7 +4,7 @@ include("includes/db.php");
 $login_fail="";
 if (isset($_POST['login'])) {
 
-    $u_email = $_POST['u_email'];
+    $u_email = trim($_POST['u_email']);
 
     $u_password = $_POST['u_password'];
 
@@ -20,11 +20,17 @@ if (isset($_POST['login'])) {
         $login_fail="Invalid email or password";
     } 
     else {
-        
+        $get_email = "select * from users where user_email='$u_email'";
+
+        $run_email = mysqli_query($con, $get_email);
+      
+        $get_data = mysqli_fetch_array($run_email);
+        $u_id = $get_data['user_id'];
 
         $_SESSION['user_email'] = $u_email;
+        $_SESSION['user_id'] = $u_id;
 
-        echo "<script>window.open('user/my_account.php?my_orders','_self')</script>";
+        echo "<script>window.open('user/myaccount.php','_self')</script>";
     }
   }
   else{
