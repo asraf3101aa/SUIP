@@ -7,11 +7,196 @@ if (!isset($_SESSION['user_email']) || !isset($_SESSION['user_id'])) {
   echo "<script>window.open('../login.php','_self')</script>";
   exit();
 }
-  include("includes/header.php");
+
+
+
+
+
+
+$email_err = $name_err = $contact_err =  $password_err = $confirm_password_err = $address_err = "";
+$name_regex = $phone_regex = $password_regex = "";
+$password = "";
+$u_email = $u_contact = $u_name = $u_password = "";
+$name_regex = "/^[a-zA-Z]{3,20}(?: [a-zA-Z]+){0,2}$/";
+$phone_regex = "/(\+977)?[9][6-9]\d{8}/";
+$password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/";
+$u_image = "user.png";
+$confirmation_message = "";
+$confirmation_error = "";
+$u_address = "";
+if (isset($_POST['savechanges'])) {
+
+  //validity check
+
+
+  //check for email
+  if (empty(trim($_POST["u_email"]))) {
+    $email_err = "Email cannot be blank";
+  } else if (!filter_var(trim($_POST["u_email"], FILTER_VALIDATE_EMAIL))) {
+    $email_err = "Enter valid email";
+  } else {
+    $u_email = trim($_POST['u_email']);
+  }
+
+  //check for name
+  if (!preg_match($name_regex, (trim($_POST['u_name'])))) {
+    $name_err = "Enter Valid name";
+  } else {
+    $u_name = trim($_POST['u_name']);
+  }
+
+  //check for phone number
+  if (!preg_match($phone_regex, (trim($_POST['u_contact'])))) {
+    $contact_err = "Enter valid phone number";
+  } else {
+    $u_contact = trim($_POST['u_contact']);
+  }
+
+if(isset($_GET['changepassword'])){
+  // Check for password
+  if (!preg_match($password_regex, (trim($_POST['u_password'])))) {
+    $password_err = "Enter strong password with minimum length 6";
+  } else {
+    $password = trim($_POST['u_password']);
+  }
+
+  // Check for confirm password field
+  if (trim($_POST['u_password']) !=  trim($_POST['u_confirmpassword'])) {
+    $confirm_password_err = "Passwords should match";
+  }
+}
+  
+
+  if (empty(trim($_POST['u_address']))) {
+    $address_err = "Enter your address";
+  } else {
+    $u_address = trim($_POST['u_address']);
+  }
+
+
+
+  $u_password = password_hash($password, PASSWORD_DEFAULT);
+
+
+  $get_email = "select * from users where user_email='$u_email'";
+
+  $run_email = mysqli_query($con, $get_email);
+
+  $check_email = mysqli_num_rows($run_email);
+
+  if ($check_email == 2) {
+
+    $email_err = "This email is already registered, try another one";
+  }
+  $get_contact = "select * from users where user_contact='$u_contact'";
+
+  $run_contact = mysqli_query($con, $get_contact);
+
+  $check_contact = mysqli_num_rows($run_contact);
+
+  if ($check_contact == 2) {
+
+    $contact_err = "This number is already registered, try another one";
+  }
+
+  if (empty($email_err) && empty($name_err) && empty($contact_err) && empty($password_err) && empty($address_err) && $check_email!=1) {
+
+
+
+    $user_confirm_code = mt_rand();
+    include("../mail.php");
+
+
+    if (!$mail->send()) {
+      $confirmation_error = "Invalid email";
+    } else {
+      $confirmation_message = "Check your email for account confirmation";
+     
+    }
+    $insert_user = "insert into users(user_name,user_email,user_password,user_contact,user_image,user_address,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_image','$u_address','$user_confirm_code')";
+
+    if(!mysqli_query($con, $insert_user)){
+      $confirmation_error = "Some error occured.";
+    }
+    else{
+      $_SESSION['user_email'] = $u_email;
+    }
+  }
+}
+
+
+
+
+
 
 ?>
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+<?php
+include("includes/header.php");
+if ($name_err != "") {
+?><style>
+    .name-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($email_err != "") {
+          ?><style>
+    .email-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($contact_err != "") {
+          ?><style>
+    .contact-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($address_err != "") {
+          ?><style>
+    .address-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($password_err != "") {
+          ?><style>
+    .password-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($confirm_password_err != "") {
+          ?><style>
+    .confirmpassword-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($confirmation_error != "") {
+          ?><style>
+    .signup-success {
+      display: block;
+      color: #af4242;
+      background-color: #fde8ec;
+    }
+  </style><?php
+        }
+        if ($confirmation_message != "") {
+          ?><style>
+    .signup-success {
+      display: block;
+    }
+  </style><?php
+        }
+
+
+
+
+
+?>
+
 </head>
 
 <body>
@@ -26,7 +211,7 @@ if (!isset($_SESSION['user_email']) || !isset($_SESSION['user_id'])) {
 
       <nav id="navbar" class="navbar order-last order-lg-0">
         <ul>
-          <li><a class="nav-link scrollto" href="./">Home</a></li>
+          <li><a class="nav-link scrollto" href="../index.php">Home</a></li>
           <li><a class="nav-link scrollto" href="">Services</a></li>
           <li><a class="nav-link scrollto" href="">Contact</a></li>
         </ul>
@@ -59,386 +244,157 @@ if (!isset($_SESSION['user_email']) || !isset($_SESSION['user_id'])) {
 
     <div class="container light-style flex-grow-1 container-p-y">
 
-  
-      <div class="card overflow-hidden">
-        <div class="row no-gutters row-bordered row-border-light">
-          <div class="col-md-3 pt-0">
-            <div class="list-group list-group-flush account-settings-links">
-              <a class="list-group-item list-group-item-action active" data-toggle="list" href="#account-general">General</a>
-              <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-change-password">Change password</a>
-              <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-info">Info</a>
-              <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-social-links">Social links</a>
-              <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-connections">Connections</a>
-              <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-notifications">Notifications</a>
+      <form action="" method="post">
+        <div class="card overflow-hidden">
+          <div class="row no-gutters row-bordered row-border-light">
+            <div class="col-md-3 pt-0">
+              <?php include("includes/sidebar.php"); ?>
             </div>
-          </div>
-          <div class="col-md-9">
-            <div class="tab-content">
-              <div class="tab-pane fade active show" id="account-general">
-  
-                <div class="card-body media align-items-center">
-                  <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="d-block ui-w-80">
-                  <div class="media-body ml-4 mt-2">
-                    <label class="btn btn-warning">
-                      Upload new photo
-                      <input type="file" class="account-settings-fileinput">
-                    </label> &nbsp;
-                    <button type="button" class="btn btn-default md-btn-flat">Reset</button>
-  
-                    <div class="text-light small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
-                  </div>
-                </div>
-                <hr class="border-light m-0">
-  
-                <div class="card-body">
-                  <div class="form-group">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control mb-1" value="<?php echo (isset($u_name)) ? $u_name : '' ?>">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">E-mail</label>
-                    <input type="email" class="form-control mb-1" value="<?php echo (isset($u_email)) ? $u_email : '' ?>">
-                    <?php
+            <div class="col-md-9">
+              <div class="tab-content">
+                <?php
+                if (isset($_GET['general'])) {
 
-                        $u_email = $_SESSION['user_email'];
+                  include("general.php");
+                }
+                if (isset($_GET['changepassword'])) {
+                  include("changepassword.php");
+                }
+                ?>
 
-                        $get_user = "select * from users where user_email='$u_email'";
 
-                        $run_user = mysqli_query($con, $get_user);
 
-                        $row_user = mysqli_fetch_array($run_user);
-
-                        $user_confirm_code = $row_user['user_confirm_code'];
-
-                        $c_name = $row_user['user_name'];
-
-                        if (!empty($user_confirm_code)) {
-
-                      ?>
-                        <div class="alert alert-warning mt-3">
-                        Your email is not confirmed.
-                        <a href="myaccount.php?send_email">Resend confirmation</a>
-                      
-                      
-                        </div>
-                        <?php } ?>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Phone No.</label>
-                    <input type="text" class="form-control" value="<?php echo (isset($u_contact)) ? $u_contact : '' ?>">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Address</label>
-                    <input type="text" class="form-control" value="<?php echo (isset($u_address)) ? $u_address : '' ?>">
-                  </div>
-                </div>
-  
-              </div>
-              <div class="tab-pane fade" id="account-change-password">
-                <div class="card-body pb-2">
-  
-                  <div class="form-group">
-                    <label class="form-label">Current password</label>
-                    <input type="password" class="form-control">
-                  </div>
-  
-                  <div class="form-group">
-                    <label class="form-label">New password</label>
-                    <input type="password" class="form-control">
-                  </div>
-  
-                  <div class="form-group">
-                    <label class="form-label">Repeat new password</label>
-                    <input type="password" class="form-control">
-                  </div>
-  
-                </div>
-              </div>
-              <div class="tab-pane fade" id="account-info">
-                <div class="card-body pb-2">
-  
-                  <div class="form-group">
-                    <label class="form-label">Bio</label>
-                    <textarea class="form-control" rows="5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nunc arcu, dignissim sit amet sollicitudin iaculis, vehicula id urna. Sed luctus urna nunc. Donec fermentum, magna sit amet rutrum pretium, turpis dolor molestie diam, ut lacinia diam risus eleifend sapien. Curabitur ac nibh nulla. Maecenas nec augue placerat, viverra tellus non, pulvinar risus.</textarea>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Birthday</label>
-                    <input type="text" class="form-control" value="May 3, 1995">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Country</label>
-                    <select class="custom-select">
-                      <option>USA</option>
-                      <option selected="">Canada</option>
-                      <option>UK</option>
-                      <option>Germany</option>
-                      <option>France</option>
-                    </select>
-                  </div>
-  
-  
-                </div>
-                <hr class="border-light m-0">
-                <div class="card-body pb-2">
-  
-                  <h6 class="mb-4">Contacts</h6>
-                  <div class="form-group">
-                    <label class="form-label">Phone</label>
-                    <input type="text" class="form-control" value="+0 (123) 456 7891">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Website</label>
-                    <input type="text" class="form-control" value="">
-                  </div>
-  
-                </div>
-        
-              </div>
-              <div class="tab-pane fade" id="account-social-links">
-                <div class="card-body pb-2">
-  
-                  <div class="form-group">
-                    <label class="form-label">Twitter</label>
-                    <input type="text" class="form-control" value="https://twitter.com/user">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Facebook</label>
-                    <input type="text" class="form-control" value="https://www.facebook.com/user">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Google+</label>
-                    <input type="text" class="form-control" value="">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">LinkedIn</label>
-                    <input type="text" class="form-control" value="">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Instagram</label>
-                    <input type="text" class="form-control" value="https://www.instagram.com/user">
-                  </div>
-  
-                </div>
-              </div>
-              <div class="tab-pane fade" id="account-connections">
-                <div class="card-body">
-                  <button type="button" class="btn btn-twitter">Connect to <strong>Twitter</strong></button>
-                </div>
-                <hr class="border-light m-0">
-                <div class="card-body">
-                  <h5 class="mb-2">
-                    <a href="javascript:void(0)" class="float-right text-muted text-tiny"><i class="ion ion-md-close"></i> Remove</a>
-                    <i class="ion ion-logo-google text-google"></i>
-                    You are connected to Google:
-                  </h5>
-                  nmaxwell@mail.com
-                </div>
-                <hr class="border-light m-0">
-                <div class="card-body">
-                  <button type="button" class="btn btn-facebook">Connect to <strong>Facebook</strong></button>
-                </div>
-                <hr class="border-light m-0">
-                <div class="card-body">
-                  <button type="button" class="btn btn-instagram">Connect to <strong>Instagram</strong></button>
-                </div>
-              </div>
-              <div class="tab-pane fade" id="account-notifications">
-                <div class="card-body pb-2">
-  
-                  <h6 class="mb-4">Activity</h6>
-  
-                  <div class="form-group">
-                    <label class="switcher">
-                      <input type="checkbox" class="switcher-input" checked="">
-                      <span class="switcher-indicator">
-                        <span class="switcher-yes"></span>
-                        <span class="switcher-no"></span>
-                      </span>
-                      <span class="switcher-label">Email me when someone comments on my article</span>
-                    </label>
-                  </div>
-                  <div class="form-group">
-                    <label class="switcher">
-                      <input type="checkbox" class="switcher-input" checked="">
-                      <span class="switcher-indicator">
-                        <span class="switcher-yes"></span>
-                        <span class="switcher-no"></span>
-                      </span>
-                      <span class="switcher-label">Email me when someone answers on my forum thread</span>
-                    </label>
-                  </div>
-                  <div class="form-group">
-                    <label class="switcher">
-                      <input type="checkbox" class="switcher-input">
-                      <span class="switcher-indicator">
-                        <span class="switcher-yes"></span>
-                        <span class="switcher-no"></span>
-                      </span>
-                      <span class="switcher-label">Email me when someone follows me</span>
-                    </label>
-                  </div>
-                </div>
-                <hr class="border-light m-0">
-                <div class="card-body pb-2">
-  
-                  <h6 class="mb-4">Application</h6>
-  
-                  <div class="form-group">
-                    <label class="switcher">
-                      <input type="checkbox" class="switcher-input" checked="">
-                      <span class="switcher-indicator">
-                        <span class="switcher-yes"></span>
-                        <span class="switcher-no"></span>
-                      </span>
-                      <span class="switcher-label">News and announcements</span>
-                    </label>
-                  </div>
-                  <div class="form-group">
-                    <label class="switcher">
-                      <input type="checkbox" class="switcher-input">
-                      <span class="switcher-indicator">
-                        <span class="switcher-yes"></span>
-                        <span class="switcher-no"></span>
-                      </span>
-                      <span class="switcher-label">Weekly product updates</span>
-                    </label>
-                  </div>
-                  <div class="form-group">
-                    <label class="switcher">
-                      <input type="checkbox" class="switcher-input" checked="">
-                      <span class="switcher-indicator">
-                        <span class="switcher-yes"></span>
-                        <span class="switcher-no"></span>
-                      </span>
-                      <span class="switcher-label">Weekly blog digest</span>
-                    </label>
-                  </div>
-  
-                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-  
-      <div class="d-flex justify-content-end mt-3 mb-3">
-        <button type="button" class="btn btn-warning">Save changes</button>&nbsp;
-      </div>
-  
+
+        <div class="d-flex justify-content-end mt-3 mb-3">
+          <button type="submit" class="btn btn-warning" name="savechanges">Save changes</button>&nbsp;
+        </div>
+      </form>
     </div>
-  
-  <style type="text/css">
-  body{
-      background: whitesmoke;
-      margin-top:20px;
-  }
-  
-  .ui-w-80 {
-      width: 80px !important;
-      height: auto;
-  }
-  
-  .btn-default {
-      border-color: rgba(24,28,33,0.1);
-      background: rgba(0,0,0,0);
-      color: #4E5155;
-  }
-  
-  label.btn {
-      margin-bottom: 0;
-  }
-  
-  .btn-outline-primary {
-      border-color: #26B4FF;
-      background: transparent;
-      color: #26B4FF;
-  }
-  
-  .btn {
-      cursor: pointer;
-  }
-  
-  .text-light {
-      color: #babbbc !important;
-  }
-  
-  .btn-facebook {
-      border-color: rgba(0,0,0,0);
-      background: #3B5998;
-      color: #fff;
-  }
-  
-  .btn-instagram {
-      border-color: rgba(0,0,0,0);
-      background: #000;
-      color: #fff;
-  }
-  
-  .card {
-      background-clip: padding-box;
-      box-shadow: 0 1px 4px rgba(24,28,33,0.012);
-  }
-  
-  .row-bordered {
-      overflow: hidden;
-  }
-  
-  .account-settings-fileinput {
-      position: absolute;
-      visibility: hidden;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-  }
-  .account-settings-links .list-group-item.active {
-      font-weight: bold !important;
-  }
-  html:not(.dark-style) .account-settings-links .list-group-item.active {
-      background: transparent !important;
-  }
-  .account-settings-multiselect ~ .select2-container {
-      width: 100% !important;
-  }
-  .light-style .account-settings-links .list-group-item {
-      padding: 0.85rem 1.5rem;
-      border-color: rgba(24, 28, 33, 0.03) !important;
-  }
-  .light-style .account-settings-links .list-group-item.active {
-      color: #4e5155 !important;
-  }
-  .material-style .account-settings-links .list-group-item {
-      padding: 0.85rem 1.5rem;
-      border-color: rgba(24, 28, 33, 0.03) !important;
-  }
-  .material-style .account-settings-links .list-group-item.active {
-      color: #4e5155 !important;
-  }
-  .dark-style .account-settings-links .list-group-item {
-      padding: 0.85rem 1.5rem;
-      border-color: rgba(255, 255, 255, 0.03) !important;
-  }
-  .dark-style .account-settings-links .list-group-item.active {
-      color: #fff !important;
-  }
-  .light-style .account-settings-links .list-group-item.active {
-      color: #4E5155 !important;
-  }
-  .light-style .account-settings-links .list-group-item {
-      padding: 0.85rem 1.5rem;
-      border-color: rgba(24,28,33,0.03) !important;
-  }
-  
-  
-  
-  </style>
-  
-  <script type="text/javascript">
-  
-  </script>
+
+    <style type="text/css">
+      body {
+        background: whitesmoke;
+        margin-top: 20px;
+      }
+
+      .ui-w-80 {
+        width: 80px !important;
+        height: auto;
+      }
+
+      .btn-default {
+        border-color: rgba(24, 28, 33, 0.1);
+        background: rgba(0, 0, 0, 0);
+        color: #4E5155;
+      }
+
+      label.btn {
+        margin-bottom: 0;
+      }
+
+      .btn-outline-primary {
+        border-color: #26B4FF;
+        background: transparent;
+        color: #26B4FF;
+      }
+
+      .btn {
+        cursor: pointer;
+      }
+
+      .text-light {
+        color: #babbbc !important;
+      }
+
+      .btn-facebook {
+        border-color: rgba(0, 0, 0, 0);
+        background: #3B5998;
+        color: #fff;
+      }
+
+      .btn-instagram {
+        border-color: rgba(0, 0, 0, 0);
+        background: #000;
+        color: #fff;
+      }
+
+      .card {
+        background-clip: padding-box;
+        box-shadow: 0 1px 4px rgba(24, 28, 33, 0.012);
+      }
+
+      .row-bordered {
+        overflow: hidden;
+      }
+
+      .account-settings-fileinput {
+        position: absolute;
+        visibility: hidden;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+      }
+
+      .account-settings-links .list-group-item.active {
+        font-weight: bold !important;
+      }
+
+      html:not(.dark-style) .account-settings-links .list-group-item.active {
+        background: transparent !important;
+      }
+
+      .account-settings-multiselect~.select2-container {
+        width: 100% !important;
+      }
+
+      .light-style .account-settings-links .list-group-item {
+        padding: 0.85rem 1.5rem;
+        border-color: rgba(24, 28, 33, 0.03) !important;
+      }
+
+      .light-style .account-settings-links .list-group-item.active {
+        color: #4e5155 !important;
+      }
+
+      .material-style .account-settings-links .list-group-item {
+        padding: 0.85rem 1.5rem;
+        border-color: rgba(24, 28, 33, 0.03) !important;
+      }
+
+      .material-style .account-settings-links .list-group-item.active {
+        color: #4e5155 !important;
+      }
+
+      .dark-style .account-settings-links .list-group-item {
+        padding: 0.85rem 1.5rem;
+        border-color: rgba(255, 255, 255, 0.03) !important;
+      }
+
+      .dark-style .account-settings-links .list-group-item.active {
+        color: #fff !important;
+      }
+
+      .light-style .account-settings-links .list-group-item.active {
+        color: #4E5155 !important;
+      }
+
+      .light-style .account-settings-links .list-group-item {
+        padding: 0.85rem 1.5rem;
+        border-color: rgba(24, 28, 33, 0.03) !important;
+      }
+    </style>
+
+    <script type="text/javascript">
+
+    </script>
 
   </main><!-- End #main -->
 
-  <?php include("includes/footer.php");?>
+  <?php include("includes/footer.php"); ?>
 
   <div id="preloader"></div>
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -460,35 +416,35 @@ if (!isset($_SESSION['user_email']) || !isset($_SESSION['user_id'])) {
 </html>
 <?php
 
-  if (isset($_GET[$user_confirm_code])) {
+if (isset($_GET[$user_confirm_code])) {
 
-    $update_user = "update users set user_confirm_code='' where user_confirm_code='$user_confirm_code'";
+  $update_user = "update users set user_confirm_code='' where user_confirm_code='$user_confirm_code'";
 
-    $run_confirm = mysqli_query($con, $update_user);
+  $run_confirm = mysqli_query($con, $update_user);
 
-    echo "<script>alert('Your Email Has Been Confirmed')</script>";
+  echo "<script>alert('Your Email Has Been Confirmed')</script>";
 
-    echo "<script>window.open('myaccount.php','_self')</script>";
-  }
+  echo "<script>window.open('myaccount.php','_self')</script>";
+}
 
-  if (isset($_GET['send_email'])) {
+if (isset($_GET['send_email'])) {
 
-    include("../mail.php");
+  include("../mail.php");
 
-    if (!$mail->send()) {
-  ?>
-      <script>
-        alert("<?php echo " Error occured " ?>");
-      </script>
-    <?php
-    } else {
-    ?>
-      <script>
-        alert("<?php echo " Check your mail for account confirmation " ?>");
-      </script>
+  if (!$mail->send()) {
+?>
+    <script>
+      alert("<?php echo " Error occured " ?>");
+    </script>
   <?php
-    }
-
-    echo "<script>window.open('my_account.php?my_orders','_self')</script>";
-  }
+  } else {
   ?>
+    <script>
+      alert("<?php echo " Check your mail for account confirmation " ?>");
+    </script>
+<?php
+  }
+
+  echo "<script>window.open('myaccount.php','_self')</script>";
+}
+?>
