@@ -197,7 +197,7 @@ if ($to_err != "") {
       <?php
       if (isset($_SESSION['user_email'])) {
       ?>
-        <a href="user/myaccount.php" class="get-started-btn scrollto">Profile</a>
+        <a href="user/myaccount.php?general" class="get-started-btn scrollto">Profile</a>
       <?php
       } else {
       ?>

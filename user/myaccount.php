@@ -11,22 +11,20 @@ if (!isset($_SESSION['user_email']) || !isset($_SESSION['user_id'])) {
 
 
 
+$user_id = $_SESSION['user_id'];
 
 
-$email_err = $name_err = $contact_err =  $password_err = $confirm_password_err = $address_err = "";
-$name_regex = $phone_regex = $password_regex = "";
-$password = "";
-$u_email = $u_contact = $u_name = $u_password = "";
+
+
+$email_err = $name_err = $contact_err = $address_err = "";
+$name_regex = $phone_regex = "";
+$u_email = $u_contact = $u_name = "";
 $name_regex = "/^[a-zA-Z]{3,20}(?: [a-zA-Z]+){0,2}$/";
 $phone_regex = "/(\+977)?[9][6-9]\d{8}/";
-$password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/";
-$u_image = "user.png";
 $confirmation_message = "";
 $confirmation_error = "";
 $u_address = "";
-if (isset($_POST['savechanges'])) {
-
-  //validity check
+if (isset($_POST['updateinfo'])) {
 
 
   //check for email
@@ -51,32 +49,16 @@ if (isset($_POST['savechanges'])) {
   } else {
     $u_contact = trim($_POST['u_contact']);
   }
-
-if(isset($_GET['changepassword'])){
-  // Check for password
-  if (!preg_match($password_regex, (trim($_POST['u_password'])))) {
-    $password_err = "Enter strong password with minimum length 6";
-  } else {
-    $password = trim($_POST['u_password']);
-  }
-
-  // Check for confirm password field
-  if (trim($_POST['u_password']) !=  trim($_POST['u_confirmpassword'])) {
-    $confirm_password_err = "Passwords should match";
-  }
-}
-  
-
   if (empty(trim($_POST['u_address']))) {
     $address_err = "Enter your address";
   } else {
     $u_address = trim($_POST['u_address']);
   }
+  $u_image = $_FILES['u_image']['name'];
 
+  $u_image_tmp = $_FILES['u_image']['tmp_name'];
 
-
-  $u_password = password_hash($password, PASSWORD_DEFAULT);
-
+  move_uploaded_file($u_image_tmp, "avatar/$u_image");
 
   $get_email = "select * from users where user_email='$u_email'";
 
@@ -84,7 +66,7 @@ if(isset($_GET['changepassword'])){
 
   $check_email = mysqli_num_rows($run_email);
 
-  if ($check_email == 2) {
+  if ($check_email == 1 && $u_email != $_SESSION['user_email']) {
 
     $email_err = "This email is already registered, try another one";
   }
@@ -92,42 +74,90 @@ if(isset($_GET['changepassword'])){
 
   $run_contact = mysqli_query($con, $get_contact);
 
+  $row_user = mysqli_fetch_array($run_contact);
+
+  $user_email_tmp = $row_user['user_email'];
+
   $check_contact = mysqli_num_rows($run_contact);
 
-  if ($check_contact == 2) {
+  if ($check_contact == 1 && $user_email_tmp != $_SESSION['user_email']) {
 
     $contact_err = "This number is already registered, try another one";
   }
 
-  if (empty($email_err) && empty($name_err) && empty($contact_err) && empty($password_err) && empty($address_err) && $check_email!=1) {
+  if (empty($email_err) && empty($name_err) && empty($contact_err) && empty($address_err)) {
+
+    if ($u_email != $_SESSION['user_email']) {
+      $user_confirm_code = mt_rand();
+      include("../mail.php");
 
 
-
-    $user_confirm_code = mt_rand();
-    include("../mail.php");
-
-
-    if (!$mail->send()) {
-      $confirmation_error = "Invalid email";
-    } else {
-      $confirmation_message = "Check your email for account confirmation";
-     
+      if (!$mail->send()) {
+        $confirmation_error = "Invalid email";
+      } else {
+        $confirmation_message = "Check your email for account confirmation";
+      }
     }
-    $insert_user = "insert into users(user_name,user_email,user_password,user_contact,user_image,user_address,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_image','$u_address','$user_confirm_code')";
 
-    if(!mysqli_query($con, $insert_user)){
+    $update_user = "update users set user_name='$u_name',user_email='$u_email',user_contact='$u_contact',user_address='$u_address',user_image='$u_image' where user_id='$user_id'";
+    if (!mysqli_query($con, $insert_user)) {
       $confirmation_error = "Some error occured.";
-    }
-    else{
+    } else {
       $_SESSION['user_email'] = $u_email;
     }
   }
 }
 
+$password_err = $confirm_password_err = "";
+$password_regex = "";
+$password = "";
+$password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/";
+$confirmation_message = "";
+$confirmation_error = "";
+if (isset($_POST['updatepassword'])) {
+  if (!preg_match($password_regex, $_POST['new_pass'])) {
+    $password_err = "Enter strong password with minimum length 6";
+  } else {
+    $password = $_POST['new_pass'];
+  }
 
+  // Check for confirm password field
+  if ($_POST['new_pass'] !=  $_POST['new_pass_again']) {
+    $confirm_password_err = "Passwords should match";
+  }
+  if (empty($password_err) && empty($confirm_password_err)) {
 
+    $old_pass = $_POST['old_pass'];
 
+    $new_pass = $_POST['new_pass'];
 
+    $new_pass_again = $_POST['new_pass_again'];
+
+    $sel_old_pass = "select * from customers where customer_email='$u_email'";
+
+    $run_old_pass = mysqli_query($con, $sel_old_pass);
+
+    $check_old_pass = mysqli_num_rows($run_old_pass);
+
+    $data = mysqli_fetch_assoc($run_old_pass);
+    $hash_password = $data["user_password"];
+
+    if (!password_verify($old_pass, $hash_password)) {
+
+      $confirmation_error = "Incorrect password";
+    } else {
+      $password_set = password_hash($new_pass, PASSWORD_DEFAULT);
+      $update_pass = "update users set user_password='$password_set' where user_email='$u_email'";
+
+      $run_pass = mysqli_query($con, $update_pass);
+
+      if ($run_pass) {
+
+        $confirmation_message = "Password changed successfully";
+      }
+    }
+  }
+}
 
 ?>
 <?php
@@ -195,7 +225,7 @@ if ($name_err != "") {
 
 
 
-?>
+          ?>
 
 </head>
 
@@ -205,7 +235,7 @@ if ($name_err != "") {
   <header id="header" class="fixed-top" style="background: linear-gradient(to right, rgba(37, 117, 252, 1),rgba(106, 17, 203, 1));">
     <div class="container d-flex align-items-center justify-content-lg-between">
 
-      <h1 class="logo me-auto me-lg-0"><a href="index.php">SUIP<span>.</span></a></h1>
+      <h1 class="logo me-auto me-lg-0"><a href="../index.php">SUIP<span>.</span></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
@@ -243,35 +273,38 @@ if ($name_err != "") {
     </section><!-- End Breadcrumbs -->
 
     <div class="container light-style flex-grow-1 container-p-y">
+      <div class="card overflow-hidden">
+        <div class="row no-gutters row-bordered row-border-light">
+          <div class="col-md-3 pt-0">
+            <?php include("includes/sidebar.php"); ?>
+          </div>
+          <div class="col-md-9">
+            <div class="tab-content">
+              <?php
+              if (isset($_GET['general'])) {
 
-      <form action="" method="post">
-        <div class="card overflow-hidden">
-          <div class="row no-gutters row-bordered row-border-light">
-            <div class="col-md-3 pt-0">
-              <?php include("includes/sidebar.php"); ?>
-            </div>
-            <div class="col-md-9">
-              <div class="tab-content">
-                <?php
-                if (isset($_GET['general'])) {
-
-                  include("general.php");
-                }
-                if (isset($_GET['changepassword'])) {
-                  include("changepassword.php");
-                }
-                ?>
+                include("general.php");
+              }
+              if (isset($_GET['changepassword'])) {
+                include("changepassword.php");
+              }
+              ?>
 
 
 
-              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="d-flex justify-content-end mt-3 mb-3">
-          <button type="submit" class="btn btn-warning" name="savechanges">Save changes</button>&nbsp;
-        </div>
+      <div class="d-flex justify-content-end mt-3 mb-3">
+        <button type="submit" class="btn btn-warning" name="<?php if (isset($_GET['general'])) {
+                                                              echo "updateinfo";
+                                                            }
+                                                            if (isset($_GET['changepassword'])) {
+                                                              echo "updatepassword";
+                                                            } ?>">Save changes</button>&nbsp;
+      </div>
       </form>
     </div>
 
@@ -416,18 +449,17 @@ if ($name_err != "") {
 </html>
 <?php
 
-if (isset($_GET[$user_confirm_code])) {
 
-  $update_user = "update users set user_confirm_code='' where user_confirm_code='$user_confirm_code'";
-
-  $run_confirm = mysqli_query($con, $update_user);
-
-  echo "<script>alert('Your Email Has Been Confirmed')</script>";
-
-  echo "<script>window.open('myaccount.php','_self')</script>";
-}
 
 if (isset($_GET['send_email'])) {
+  $u_email = $_SESSION['user_email'];
+  $sel_user_confirm_code = "select * from users where user_email='$u_email'";
+
+  $run_user_confirm_code = mysqli_query($con, $sel_user_confirm_code);
+
+  $data = mysqli_fetch_assoc($run_user_confirm_code);
+  $user_confirm_code = $data["user_confirm_code"];
+
 
   include("../mail.php");
 
@@ -445,6 +477,6 @@ if (isset($_GET['send_email'])) {
 <?php
   }
 
-  echo "<script>window.open('myaccount.php','_self')</script>";
+  echo "<script>window.open('myaccount.php?general','_self')</script>";
 }
 ?>

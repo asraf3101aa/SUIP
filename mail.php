@@ -30,7 +30,7 @@
             Email Confirmation By SUIP
             </h2>
             
-            <a href='$url/myaccount.php?$user_confirm_code'>
+            <a href='$url/verifymail.php?$user_confirm_code'>
             
             Click Here To Confirm Email
             

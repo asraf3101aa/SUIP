@@ -44,14 +44,14 @@ if (isset($_POST['register'])) {
 
 
   // Check for password
-  if (!preg_match($password_regex, (trim($_POST['u_password'])))) {
+  if (!preg_match($password_regex, $_POST['u_password'])) {
     $password_err = "Enter strong password with minimum length 6";
   } else {
-    $password = trim($_POST['u_password']);
+    $password = $_POST['u_password'];
   }
 
   // Check for confirm password field
-  if (trim($_POST['u_password']) !=  trim($_POST['u_confirmpassword'])) {
+  if ($_POST['u_password'] != $_POST['u_confirmpassword']){
     $confirm_password_err = "Passwords should match";
   }
 
@@ -87,7 +87,7 @@ if (isset($_POST['register'])) {
     $contact_err = "This number is already registered, try another one";
   }
 
-  if (empty($email_err) && empty($name_err) && empty($contact_err) && empty($password_err) && empty($address_err)) {
+  if (empty($email_err) && empty($name_err) && empty($contact_err) && empty($password_err) && empty($confirm_password_err) && empty($address_err)) {
 
 
 
@@ -101,10 +101,11 @@ if (isset($_POST['register'])) {
       $confirmation_message = "Check your email for account confirmation";
       $insert_user = "insert into users(user_name,user_email,user_password,user_contact,user_image,user_address,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_image','$u_address','$user_confirm_code')";
 
-      $run_user = mysqli_query($con, $insert_user);
-
-
-      $_SESSION['user_email'] = $u_email;
+      if (!mysqli_query($con, $insert_user)) {
+        $confirmation_error = "Some error occured.";
+      } else {
+        $_SESSION['user_email'] = $u_email;
+      }
     }
   }
 }
