@@ -10,7 +10,6 @@ $u_email = $u_contact = $u_name = $u_password = "";
 $name_regex = "/^[a-zA-Z]{3,20}(?: [a-zA-Z]+){0,2}$/";
 $phone_regex = "/(\+977)?[9][6-9]\d{8}/";
 $password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/";
-$u_image = "user.png";
 $confirmation_message = "";
 $confirmation_error = "";
 $u_address = "";
@@ -99,7 +98,7 @@ if (isset($_POST['register'])) {
       $confirmation_error = "Invalid email";
     } else {
       $confirmation_message = "Check your email for account confirmation";
-      $insert_user = "insert into users(user_name,user_email,user_password,user_contact,user_image,user_address,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_image','$u_address','$user_confirm_code')";
+      $insert_user = "insert into users(user_name,user_email,user_password,user_contact,user_address,user_confirm_code) values ('$u_name','$u_email','$u_password','$u_contact','$u_address','$user_confirm_code')";
 
       if (!mysqli_query($con, $insert_user)) {
         $confirmation_error = "Some error occured.";

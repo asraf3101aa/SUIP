@@ -29,7 +29,7 @@ if (isset($_POST['login'])) {
       $_SESSION['user_email'] = $u_email;
       $_SESSION['user_id'] = $u_id;
 
-      echo "<script>window.open('user/myaccount.php','_self')</script>";
+      echo "<script>window.open('user/myaccount.php?general','_self')</script>";
     }
   } else {
     $login_fail = "Invalid email or password";

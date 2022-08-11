@@ -15,6 +15,7 @@ $u_email = $row_user['user_email'];
 $u_contact = $row_user['user_contact'];
 $u_address = $row_user['user_address'];
 $u_image = $row_user['user_image'];
+echo $u_image;
 ?>
 
 
@@ -22,12 +23,10 @@ $u_image = $row_user['user_image'];
 
     <div class="tab-pane fade active show" id="account-general">
 
-        <p class="success signup-success text-center">
-            <?php echo (isset($confirmation_message)) ? $confirmation_message : $confirmation_error ?>
-        </p>
+        
 
         <div class="card-body media align-items-center">
-            <img src="<?php echo (isset($u_image)) ? 'avatar/' . $u_image : "https://bootdey.com/img/Content/avatar/avatar6.png" ?>" alt="" class="d-block ui-w-80">
+            <img src="<?php echo (!empty($u_image)) ? 'avatar/' . $u_image : "https://bootdey.com/img/Content/avatar/avatar6.png" ?>" alt="" class="d-block ui-w-80">
             <div class="media-body ml-4 mt-2">
                 <label class="btn btn-warning">
                     Upload new photo

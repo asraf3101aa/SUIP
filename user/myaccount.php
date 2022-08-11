@@ -108,9 +108,10 @@ if (isset($_POST['updateinfo'])) {
   }
 }
 
-$password_err = $confirm_password_err = "";
+$password_err = $confirm_password_err = $old_password_err = "";
 $password_regex = "";
 $password = "";
+$old_pass = "";
 $password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/";
 $confirmation_message = "";
 $confirmation_error = "";
@@ -132,8 +133,9 @@ if (isset($_POST['updatepassword'])) {
     $new_pass = $_POST['new_pass'];
 
     $new_pass_again = $_POST['new_pass_again'];
+    $u_email=$_SESSION['user_email'] ;
 
-    $sel_old_pass = "select * from customers where customer_email='$u_email'";
+    $sel_old_pass = "select * from users where user_email='$u_email'";
 
     $run_old_pass = mysqli_query($con, $sel_old_pass);
 
@@ -144,7 +146,7 @@ if (isset($_POST['updatepassword'])) {
 
     if (!password_verify($old_pass, $hash_password)) {
 
-      $confirmation_error = "Incorrect password";
+      $old_password_err = "Incorrect password";
     } else {
       $password_set = password_hash($new_pass, PASSWORD_DEFAULT);
       $update_pass = "update users set user_password='$password_set' where user_email='$u_email'";
@@ -200,6 +202,13 @@ if ($name_err != "") {
         if ($confirm_password_err != "") {
           ?><style>
     .confirmpassword-error {
+      display: block
+    }
+  </style><?php
+        }
+        if ($old_password_err != "") {
+          ?><style>
+    .oldpassword-error {
       display: block
     }
   </style><?php
@@ -275,6 +284,9 @@ if ($name_err != "") {
     <div class="container light-style flex-grow-1 container-p-y">
       <div class="card overflow-hidden">
         <div class="row no-gutters row-bordered row-border-light">
+        <p class="success signup-success text-center">
+            <?php echo (isset($confirmation_message)) ? $confirmation_message : $confirmation_error ?>
+        </p>
           <div class="col-md-3 pt-0">
             <?php include("includes/sidebar.php"); ?>
           </div>
@@ -287,6 +299,9 @@ if ($name_err != "") {
               }
               if (isset($_GET['changepassword'])) {
                 include("changepassword.php");
+              }
+              if (isset($_GET['deleteaccount'])) {
+                include("deleteaccount.php");
               }
               ?>
 
