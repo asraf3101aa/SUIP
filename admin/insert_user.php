@@ -21,7 +21,7 @@ if (!isset($_SESSION['admin_email'])) {
 
                 <li class="active">
 
-                    <i class="fa fa-dashboard"></i> Dashboard / Insert User
+                    <i class="fa fa-dashboard"></i> Dashboard / Insert Admin
 
                 </li>
 
@@ -64,7 +64,7 @@ if (!isset($_SESSION['admin_email'])) {
                         <div class="form-group">
                             <!-- form-group Starts -->
 
-                            <label class="col-md-3 control-label">User Name: </label>
+                            <label class="col-md-3 control-label">Name: </label>
 
                             <div class="col-md-6">
                                 <!-- col-md-6 Starts -->
@@ -84,7 +84,7 @@ if (!isset($_SESSION['admin_email'])) {
                             <div class="col-md-6">
                                 <!-- col-md-6 Starts -->
 
-                                <input type="text" name="admin_email" class="form-control" required>
+                                <input type="email" name="admin_email" class="form-control" required>
 
                             </div><!-- col-md-6 Ends -->
 
@@ -94,7 +94,7 @@ if (!isset($_SESSION['admin_email'])) {
                         <div class="form-group">
                             <!-- form-group Starts -->
 
-                            <label class="col-md-3 control-label">User Password: </label>
+                            <label class="col-md-3 control-label">Password: </label>
 
                             <div class="col-md-6">
                                 <!-- col-md-6 Starts -->
@@ -108,37 +108,24 @@ if (!isset($_SESSION['admin_email'])) {
                         <div class="form-group">
                             <!-- form-group Starts -->
 
-                            <label class="col-md-3 control-label">User Country: </label>
+                            <label class="col-md-3 control-label">Address </label>
 
                             <div class="col-md-6">
                                 <!-- col-md-6 Starts -->
 
-                                <input type="text" name="admin_country" class="form-control" required>
+                                <input type="text" name="admin_address" class="form-control" required>
 
                             </div><!-- col-md-6 Ends -->
 
                         </div><!-- form-group Ends -->
 
 
-                        <div class="form-group">
-                            <!-- form-group Starts -->
-
-                            <label class="col-md-3 control-label">User Job: </label>
-
-                            <div class="col-md-6">
-                                <!-- col-md-6 Starts -->
-
-                                <input type="text" name="admin_job" class="form-control" required>
-
-                            </div><!-- col-md-6 Ends -->
-
-                        </div><!-- form-group Ends -->
 
 
                         <div class="form-group">
                             <!-- form-group Starts -->
 
-                            <label class="col-md-3 control-label">User Contact: </label>
+                            <label class="col-md-3 control-label">Contact: </label>
 
                             <div class="col-md-6">
                                 <!-- col-md-6 Starts -->
@@ -150,19 +137,7 @@ if (!isset($_SESSION['admin_email'])) {
                         </div><!-- form-group Ends -->
 
 
-                        <div class="form-group">
-                            <!-- form-group Starts -->
 
-                            <label class="col-md-3 control-label">User About: </label>
-
-                            <div class="col-md-6">
-                                <!-- col-md-6 Starts -->
-
-                                <textarea name="admin_about" class="form-control" rows="3"> </textarea>
-
-                            </div><!-- col-md-6 Ends -->
-
-                        </div><!-- form-group Ends -->
 
                         <div class="form-group">
                             <!-- form-group Starts -->
@@ -187,7 +162,7 @@ if (!isset($_SESSION['admin_email'])) {
                             <div class="col-md-6">
                                 <!-- col-md-6 Starts -->
 
-                                <input type="submit" name="submit" value="Insert User" class="btn btn-primary form-control">
+                                <input type="submit" name="submit" value="Insert" class="btn btn-primary form-control">
 
                             </div><!-- col-md-6 Ends -->
 
@@ -217,13 +192,11 @@ if (!isset($_SESSION['admin_email'])) {
 
         $admin_pass = password_hash($pass_hold, PASSWORD_DEFAULT);
 
-        $admin_country = $_POST['admin_country'];
+        $admin_address = $_POST['admin_address'];
 
-        $admin_job = $_POST['admin_job'];
 
         $admin_contact = $_POST['admin_contact'];
 
-        $admin_about = $_POST['admin_about'];
 
 
         $admin_image = $_FILES['admin_image']['name'];
@@ -232,7 +205,7 @@ if (!isset($_SESSION['admin_email'])) {
 
         move_uploaded_file($temp_admin_image, "admin_images/$admin_image");
 
-        $insert_admin = "insert into admins (admin_name,admin_email,admin_pass,admin_image,admin_contact,admin_country,admin_job,admin_about) values ('$admin_name','$admin_email','$admin_pass','$admin_image','$admin_contact','$admin_country','$admin_job','$admin_about')";
+        $insert_admin = "insert into admins (admin_name,admin_email,admin_pass,admin_image,admin_contact,admin_address) values ('$admin_name','$admin_email','$admin_pass','$admin_image','$admin_contact','$admin_address')";
 
         $run_admin = mysqli_query($con, $insert_admin);
 

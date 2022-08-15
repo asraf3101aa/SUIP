@@ -32,31 +32,24 @@ if (!isset($_SESSION['admin_email'])) {
 
     $admin_image = $row_admin['admin_image'];
 
-    $admin_country = $row_admin['admin_country'];
+    $admin_address = $row_admin['admin_address'];
 
-    $admin_job = $row_admin['admin_job'];
 
     $admin_contact = $row_admin['admin_contact'];
 
-    $admin_about = $row_admin['admin_about'];
 
 
-    $get_products = "select * from products";
-    $run_products = mysqli_query($con, $get_products);
-    $count_products = mysqli_num_rows($run_products);
+    $get_sumo = "select * from sumo";
+    $run_sumo = mysqli_query($con, $get_sumo);
+    $count_sumo = mysqli_num_rows($run_sumo);
 
-    $get_customers = "select * from customers";
-    $run_customers = mysqli_query($con, $get_customers);
-    $count_customers = mysqli_num_rows($run_customers);
-
-    $get_p_categories = "select * from product_categories";
-    $run_p_categories = mysqli_query($con, $get_p_categories);
-    $count_p_categories = mysqli_num_rows($run_p_categories);
+    $get_users = "select * from users";
+    $run_users = mysqli_query($con, $get_users);
+    $count_users = mysqli_num_rows($run_users);
 
 
-    $get_pending_orders = "select * from pending_orders";
-    $run_pending_orders = mysqli_query($con, $get_pending_orders);
-    $count_pending_orders = mysqli_num_rows($run_pending_orders);
+
+
 
 
     ?>
@@ -74,7 +67,9 @@ if (!isset($_SESSION['admin_email'])) {
         <link href="css/style.css" rel="stylesheet">
 
         <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
-        <link rel="shortcut icon" href="../images/LOGO.png" type="image/png">
+        <!-- Favicons -->
+        <link href="../assets/img/favicon.png" rel="icon">
+        <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">F
 
     </head>
 
@@ -103,9 +98,9 @@ if (!isset($_SESSION['admin_email'])) {
                         include("insert_product.php");
                     }
 
-                    if (isset($_GET['view_products'])) {
+                    if (isset($_GET['view_sumo'])) {
 
-                        include("view_products.php");
+                        include("view_sumo.php");
                     }
 
                     if (isset($_GET['delete_product'])) {
@@ -181,9 +176,9 @@ if (!isset($_SESSION['admin_email'])) {
                     }
 
 
-                    if (isset($_GET['view_customers'])) {
+                    if (isset($_GET['view_users'])) {
 
-                        include("view_customers.php");
+                        include("view_users.php");
                     }
                     if (isset($_GET['view_wholesaler'])) {
 

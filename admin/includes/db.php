@@ -1,5 +1,5 @@
 <?php
 
-$con = mysqli_connect("localhost","root","","businessconnect");
+$con = mysqli_connect("localhost","root","","suip");
 
 ?>

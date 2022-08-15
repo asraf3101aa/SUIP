@@ -449,7 +449,7 @@ if (!isset($_SESSION['admin_email'])) {
 
                     <a href="#" data-toggle="collapse" data-target="#users">
 
-                        <i class="fa fa-fw fa-gear"></i> Users
+                        <i class="fa fa-fw fa-gear"></i> Admins
 
                         <i class="fa fa-fw fa-caret-down"></i>
 
@@ -459,11 +459,11 @@ if (!isset($_SESSION['admin_email'])) {
                     <ul id="users" class="collapse">
 
                         <li>
-                            <a href="index.php?insert_user"> Insert User </a>
+                            <a href="index.php?insert_user"> Insert Admin </a>
                         </li>
 
                         <li>
-                            <a href="index.php?view_users"> View Users </a>
+                            <a href="index.php?view_users"> View Admin </a>
                         </li>
 
                     </ul>

@@ -38,12 +38,7 @@ if (isset($_POST['find'])) {
     $time = trim($_POST['time']);
   }
   if (empty($to_err) && empty($from_err) && empty($date_err) && empty($time_err)) {
-    $_SESSION['to'] = $to;
-    $_SESSION['from'] = $from;
-    $_SESSION['date'] = $date;
-    $_SESSION['time'] = $time;
-    header("Location: /suip/booksumo/findsumo.php"); /* Redirect browser */
-    exit();
+    header("Location: /suip/findsumo.php?from=$from&to=$to&date=$date&time=$time"); /* Redirect browser */
   }
 }
 if (isset($_POST['sendmessage'])) {

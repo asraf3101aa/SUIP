@@ -66,12 +66,7 @@ if (isset($_POST['admin_login'])) {
 
     if ($count == 1) {
         $data = mysqli_fetch_assoc($run_admin);
-        $hash_password = $data["admin_pass"];
-        if (!password_verify($admin_pass, $hash_password)) {
-            echo "<script>alert('password or email is wrong')</script>";
-    
-            exit();
-        } 
+        
 
         $_SESSION['admin_email'] = $admin_email;
 
